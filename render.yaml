@@ -1,1 +1,2 @@
-gunicorn studentcomplaint1.app:app
+
+gunicorn main:app
