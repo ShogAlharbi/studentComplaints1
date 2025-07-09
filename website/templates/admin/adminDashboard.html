@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ 'لوحة التحكم' if lang == 'ar' else 'Admin Dashboard' }}
+{% endblock %}
+
+{% block content %}
+<h2 class="my-4">{{ 'لوحة تحكم المسؤول' if lang == 'ar' else 'Admin Dashboard' }}</h2>
+
+{% if complaints %}
+  <div class="list-group">
+    {% for complaint in complaints %}
+      <a href="{{ url_for('admin.respond_to_complaint', complaint_id=complaint.id) }}" 
+         class="list-group-item list-group-item-action flex-column align-items-start mb-2">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ complaint.title }}</h5>
+          <small>{{ complaint.date_created.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+        <p class="mb-1">{{ complaint.description[:150] }}{% if complaint.description|length > 150 %}...{% endif %}</p>
+        <small>
+          {{ 'مقدم الشكوى' if lang == 'ar' else 'Submitted by' }}: {{ complaint.student.first_name if complaint.student else 'Unknown' }}
+        </small>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>{{ 'لا توجد شكاوى حالياً' if lang == 'ar' else 'No complaints found.' }}</p>
+{% endif %}
+{% endblock %}

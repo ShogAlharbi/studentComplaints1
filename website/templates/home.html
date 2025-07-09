@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ 'الصفحة الرئيسية' if lang == 'ar' else 'Home' }}{% endblock %}
+{% block content %}
+<!-- complaints count -->
+<p dir="{{ 'rtl' if lang == 'ar' else 'ltr' }}" style="text-align: {{ 'right' if lang == 'ar' else 'left' }}">
+  {{ 'عدد الشكاوى' if lang == 'ar' else 'Number of Complaints' }}: {{ complaints|length }}
+</p>
+<!-- heading -->
+<h1 align="center">{{ ' الشكوى ' if lang == 'ar' else 'The Complaint' }}</h1>
+<!-- complaint form -->
+<form method="POST" enctype="multipart/form-data" class="d-flex align-items-center" style="gap: 0.5rem;">
+  <div class="input-group" style="border: 1px solid #ced4da; border-radius: 0.25rem; overflow: hidden; flex-direction: column; gap: 10px; padding: 10px; display: flex;">
+    <!-- complaint title -->
+    <input type="text" class="form-control" id="title" name="title" required minlength="3"
+      placeholder="{{ 'عنوان الشكوى' if lang == 'ar' else 'Complaint Title' }}"
+      style="border: none; box-shadow: none; width: 100%; height: 40px; font-size: 15px; min-height: 50px; max-height: 150px; overflow-y: auto;">
+    <!-- complaint text -->
+    <textarea id="note" name="note" rows="5" placeholder="{{ 'اكتب شكواك هنا...' if lang == 'ar' else 'Write your complaints here...' }}" 
+      class="form-control" style="resize: none; min-height: 50px; max-height: 150px; overflow-y: auto; border: none; box-shadow: none;"></textarea>
+    <!-- Upload & Submit -->
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <label id="file-upload-label" for="file-upload">+</label> <!-- upload button -->
+      <input id="file-upload" name="file" type="file" style="display: none;" multiple>
+      <button type="submit" class="btn-black">{{ 'إرسال' if lang == 'ar' else 'Send' }}</button> <!-- submit button -->
+    </div>
+  </div>
+</form>
+
+<style>
+  /* button style (black) */
+  .btn-black {
+    background-color: #000 !important;    /* background */
+    color: #fff !important;               /* white text */
+    border: none !important;                /* border */
+    padding: 6px 20px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;                        /* hover */
+    width: 100%;
+    transition: background-color 0.3s ease; /* color transition */
+    text-align: center;
+  }
+  /* Hover and focus state for button */
+  .btn-black:hover,
+  .btn-black:focus {
+    background-color: #808080 !important;
+    color: #fff !important;
+    outline: none;
+  }
+  /* Upload (+) label style */
+  #file-upload-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    cursor: pointer;
+    user-select: none;
+    color: #000;
+    transition: color 0.3s ease;
+    margin-top: -5px;
+  }
+/* Hover for upload */
+  #file-upload-label:hover {
+    color: #808080;
+  }
+</style>
+{% endblock %}

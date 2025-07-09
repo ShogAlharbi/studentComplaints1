@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ 'لوحة التحكم' if lang == 'ar' else 'Admin Dashboard' }}{% endblock %}
+
+{% block content %}
+<h2 class="my-4">{{ 'الشكاوى الواردة' if lang == 'ar' else 'Submitted Complaints' }}</h2>
+
+{% if complaints %}
+<table class="table table-bordered text-center">
+  <thead class="thead-light">
+    <tr>
+      <th>{{ 'رقم' if lang == 'ar' else 'ID' }}</th>
+      <th>{{ 'العنوان' if lang == 'ar' else 'Title' }}</th>
+      <th>{{ 'الوصف' if lang == 'ar' else 'Description' }}</th>
+      <th>{{ 'التاريخ' if lang == 'ar' else 'Date' }}</th>
+      <th>{{ 'الرد' if lang == 'ar' else 'Respond' }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for complaint in complaints %}
+    <tr>
+      <td>{{ complaint.id }}</td>
+      <td>{{ complaint.title }}</td>
+      <td>{{ complaint.description }}</td>
+      <td>{{ complaint.date_created.strftime('%Y-%m-%d') }}</td>
+      <td>
+        <a href="{{ url_for('admin.respond_to_complaint', complaint_id=complaint.id) }}" class="btn btn-sm btn-primary">
+          {{ 'رد' if lang == 'ar' else 'Respond' }}
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>{{ 'لا توجد شكاوى حالياً' if lang == 'ar' else 'No complaints at the moment.' }}</p>
+{% endif %}
+{% endblock %}

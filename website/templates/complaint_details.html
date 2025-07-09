@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ 'تفاصيل الشكوى' if lang == 'ar' else 'Complaint Details' }}{% endblock %}
+
+{% block content %}
+<h2 class="mt-3">{{ complaint.title }}</h2>
+<p class="mt-2">{{ complaint.description }}</p>
+<p><small class="text-muted">{{ complaint.date_created.strftime('%Y-%m-%d %H:%M') }}</small></p>
+
+<h4 class="mt-4">{{ 'الردود' if lang == 'ar' else 'Responses' }}</h4>
+{% if complaint.responses %}
+  <ul class="list-group mt-2">
+    {% for response in complaint.responses %}
+      <li class="list-group-item">
+        {{ response.response_text }}<br>
+        <small class="text-muted">{{ response.date_created.strftime('%Y-%m-%d %H:%M') }}</small>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted mt-2">{{ 'لا يوجد ردود بعد' if lang == 'ar' else 'No responses yet.' }}</p>
+{% endif %}
+{% endblock %}

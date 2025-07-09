@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="{{ 'ar' if lang == 'ar' else 'en' }}" dir="{{ 'rtl' if lang == 'ar' else 'ltr' }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" />
+    <title>{% block title %}Home{% endblock %}</title>
+  </head>
+
+
+  <!-- Body-->
+  <body>
+    <!-- Bar-->
+    <nav class="navbar navbar-light d-flex justify-content-between align-items-center px-3" style="background-color: #efeeee;" dir="{{ 'rtl' if lang == 'ar' else 'ltr' }}">
+      {% if lang == 'ar' %}
+        <!-- Logo direction (Arabic\right) -->
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <img src="{{ url_for('static', filename='images/UPMlogo.png') }}" width="30" height="30" class="d-inline-block align-top" style="margin-left: 10px;" alt="Logo">
+          <span>شكاوى الطلاب</span>
+        </a>
+      {% else %}
+        <!-- Logo direction (En\left)-->
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <img src="{{ url_for('static', filename='images/UPMlogo.png') }}" width="30" height="30" class="d-inline-block align-top mr-2" alt="Logo">
+          <span>Student complaints</span>
+        </a>
+      {% endif %}
+
+      <!-- Lang icon and squer button -->
+      <div class="d-flex align-items-center gap-2">
+        <div class="language-selector position-relative">
+          <img src="{{ url_for('static', filename='images/languageIcon.svg') }}" alt="Language">
+            <div class="language-options" style="right: 0;">
+              <a href="?lang=ar">العربية</a>
+              <a href="?lang=en">English</a>
+            </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+
+      <!-- Links-->
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav ml-auto d-flex flex-row-reverse">
+          {% if user.is_authenticated %}
+            <li class="nav-item px-2">
+              <span class="nav-link font-weight-bold text-primary">
+                {{ 'مرحبًا،' if lang == 'ar' else 'Hello,' }} {{ user.first_name }}
+              </span>
+            </li>
+            {% if user.user_type == 'student' %}
+              <li class="nav-item px-2">
+                <a class="nav-link" href="{{ url_for('views.home') }}">
+                  {{ 'الرئيسية' if lang == 'ar' else 'Home' }}
+                </a>
+              </li>
+              <li class="nav-item px-2">
+                <a class="nav-link" href="#" id="toggle-track-bar">
+                  {{ 'متابعة الشكوى' if lang == 'ar' else 'Track Complaint' }}
+                </a>
+              </li>
+            {% elif user.user_type == 'admin' %}
+              <li class="nav-item px-2">
+                <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                  {{ 'لوحة التحكم' if lang == 'ar' else 'Dashboard' }}
+                </a>
+              </li>
+            {% endif %}
+              <li class="nav-item px-2">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                  {{ 'تسجيل الخروج' if lang == 'ar' else 'Logout' }}
+                </a>
+              </li>
+          {% else %}
+            <li class="nav-item px-2"><a class="nav-link" href="{{ url_for('auth.login') }}">{{ 'تسجيل الدخول' if lang == 'ar' else 'Login' }}</a></li>
+            <li class="nav-item px-2"><a class="nav-link" href="{{ url_for('auth.sign_up') }}">{{ 'إنشاء حساب' if lang == 'ar' else 'Sign Up' }}</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+    </nav>
+
+
+  
+
+    <!-- Messages-->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span>&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="container">{% block content %}{% endblock %}</div>
+
+    <style>
+      .no-complaints {
+        background-color: black;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        user-select: none;
+      }
+      .no-complaints:hover,
+      .no-complaints:focus,
+      .no-complaints:active {
+        background-color: #555555;
+        outline: none;
+      }
+      body {
+        direction: {{ 'rtl' if lang == 'ar' else 'ltr' }};
+        text-align: {{ 'right' if lang == 'ar' else 'left' }};
+      }
+      .language-selector img {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        border-radius: 50%;
+      }
+      .language-options {
+        display: none;
+        position: absolute;
+        top: 30px;
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        min-width: 100px;
+        z-index: 1000;
+      }
+      .language-options a {
+        color: black;
+        padding: 6px 10px;
+        display: block;
+        text-decoration: none;
+      }
+      .language-options a:hover {
+        background-color: #000;
+        color: white;
+      }
+      .language-selector:hover .language-options {
+        display: block;
+     }
+      .gap-2 {
+        gap: 10px;
+      }
+    </style>
+
+    <!-- Track-Bar -->
+    {% set current_id = request.args.get('complaint_id') %}
+    <div id="track-bar" class="p-3 border" style="display: none; position: fixed; top: 100px; {{ 'left' if lang == 'ar' else 'right' }}: 0; width: 50%; height: 100%; overflow-y: auto; z-index: 1050;background-color: #efeeee; border-color: #efeeee;">
+      <h5 class="text-center">{{ 'شكاويك' if lang == 'ar' else 'Your Complaints' }}</h5>
+      <ul class="list-group mt-3">
+      <p>{{ 'عدد الشكاوى' if lang == 'ar' else 'Number of Complaints' }}: {{ complaints|length }}</p>
+      {% if complaints %}
+        {% for complaint in complaints %}
+          <li class="list-group-item p-0 border-0 bg-transparent">
+            <a href="{{ url_for('views.track_complaints', complaint_id=complaint.id) }}" class="btn w-100 text-center mb-2 {{ 'btn-dark' if (complaint.id|string == current_id) else 'btn-black' }}" style="display: block; padding: 6px 20px; font-size: 16px;">
+              {{ complaint.title }}
+            </a>
+          </li>
+        {% endfor %}
+      {% else %}
+        <li class="list-group-item text-center no-complaints" style="cursor: pointer; background-color: #000; color: #fff; padding: 6px 20px; font-size: 16px;" onclick="window.location.href='{{ url_for('views.home') }}'">
+          {{ 'لا توجد شكاوى حتى الآن.' if lang == 'ar' else 'No complaints yet.' }}
+        </li>
+      {% endif %}
+      </ul>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleButton = document.getElementById('toggle-track-bar');
+        const trackBar = document.getElementById('track-bar');
+
+        if (toggleButton && trackBar) {
+          toggleButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            trackBar.style.display = (trackBar.style.display === 'none' || trackBar.style.display === '') ? 'block' : 'none';
+          });
+        }
+      });
+      
+      // Link eyeImages (when password is hidden or open)
+      const eyeCloseSrc = "{{ url_for('static', filename='images/eyeClose1.svg') }}";
+      const eyeOpenSrc = "{{ url_for('static', filename='images/eyeOpen1.svg') }}";
+      // Show/hide the eye icon based on status
+      function toggleEyeVisibility(inputId, eyeId) {
+        const input = document.getElementById(inputId);    // (password) field
+        const eye = document.getElementById(eyeId);        // icon
+        // If there is text / the user is typing  --> Show the icon
+        if (input.value.length > 0 || document.activeElement === input) {
+          eye.style.display = 'inline';
+        } else {
+          eye.style.display = 'none'; // If there is no text --> hide the icon
+        }
+      }
+      // Hide the icon if field is empty
+      function hideEyeIconIfEmpty(inputId, eyeId) {
+        const input = document.getElementById(inputId);     // field
+        const eye = document.getElementById(eyeId);         // icon
+        if (input.value.length === 0) {
+          eye.style.display = 'none';                       // If there is no text --> hide the icon
+        }
+      }
+      // Toggle between "password" and "text" when the eye icon is clicked
+      // Toggle (password) visibility when clicking on the icon, also switch the icon image accordingly
+      function togglePasswordVisibility(inputId, eyeId) {
+        const input = document.getElementById(inputId);     // field
+        const eye = document.getElementById(eyeId);         // icon
+        if (input.type === 'password') {
+          input.type = 'text';      // Show password
+          eye.src = eyeOpenSrc;     // Show eyeOpen1
+        } else {
+          input.type = 'password';  // Hide 
+          eye.src = eyeCloseSrc;    // Show eyeClose1
+        }
+      }
+    </script>
+  </body>
+</html>

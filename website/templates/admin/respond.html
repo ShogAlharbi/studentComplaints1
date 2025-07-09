@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}{{ 'الرد على الشكوى' if lang == 'ar' else 'Respond to Complaint' }}{% endblock %}
+{% block content %}
+<div class="container mt-4" style="max-width: 700px;">
+  <h3 class="mb-4 text-center">{{ 'الرد على الشكوى' if lang == 'ar' else 'Respond to Complaint' }}</h3>
+  <div class="card mb-4">
+    <div class="card-header">
+      <strong>{{ complaint.title }}</strong>
+      <br> <!-- space-line -->
+      <small class="text-muted">{{ complaint.date_created.strftime('%Y-%m-%d %H:%M') }}</small>
+    </div>
+    <div class="card-body">
+      <p>{{ complaint.description }}</p>
+    </div>
+  </div>
+
+  <!-- عرض الردود السابقة -->
+  <div class="responses">
+    <h4>{{ 'ردود الشكوى' if lang == 'ar' else 'Complaint Responses' }}:</h4>
+    {% if complaint.responses %}
+      <ul class="list-group">
+        {% for response in complaint.responses %}
+          <li class="list-group-item">
+            <strong>{{ response.admin.first_name }}:</strong> {{ response.response_text }}
+            <br>
+            <small class="text-muted">{{ response.date_created.strftime('%Y-%m-%d %H:%M') }}</small>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>{{ 'لا توجد ردود على هذه الشكوى بعد.' if lang == 'ar' else 'There are no responses to this complaint yet.' }}</p>
+    {% endif %}
+  </div>
+
+  <!-- نموذج الرد الجديد -->
+  <form method="POST" enctype="multipart/form-data" class="d-flex align-items-center" style="gap: 0.5rem;">
+    <div class="input-group" style="border: 1px solid #ced4da; border-radius: 0.25rem; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 10px; width: 100%;">
+
+      <style>
+          .btn-black {
+              background-color: black !important;
+              color: white !important;
+              border: none !important;
+              padding: 0.5rem 1rem;
+              border-radius: 0.25rem;
+              cursor: pointer;
+              width: 100%; /* full width */
+              transition: background-color 0.3s ease;
+          }
+
+          .btn-black:hover,
+          .btn-black:focus {
+              background-color: #808080 !important; /* lighter on hover/focus */
+              color: white !important;
+              outline: none;
+          }
+
+          #file-upload-label {
+              cursor: pointer;
+              font-size: 24px;
+              user-select: none;
+              margin-bottom: 0;
+              color: black;
+              transition: color 0.3s ease;
+          }
+          #file-upload-label:hover {
+              color: #808080;
+          }
+
+          input:focus, textarea:focus {
+              outline: 2px solid #007bff;
+              outline-offset: 2px;
+              box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+              border-color: #007bff;
+          }
+      </style>
+
+      <!-- Response Textarea -->
+      <textarea id="response" name="response" rows="5" placeholder="{{ 'اكتب ردك هنا...' if lang == 'ar' else 'Write your response here...' }}" 
+        class="form-control flex-grow-1" 
+        style="resize:none; min-height:50px; max-height:150px; overflow-y:auto; border: none; box-shadow: none;"
+        required></textarea>
+        
+      <!-- Upload and Send Button -->
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label id="file-upload-label" for="file-upload" style="display: flex; justify-content: center; align-items: center;
+           width: 30px; height: 15px;
+           font-size: 30px; cursor: pointer;
+           margin-top: -5px;">+</label>
+          <input id="file-upload" name="file" type="file" style="display:none" multiple />
+
+          <button type="submit" class="btn-black" style="padding: 6px 20px; font-size: 16px;">
+            {{ 'إرسال' if lang == 'ar' else 'Send' }}
+          </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- dashboard Button -->
+  <div style="text-align: center; margin-top: 20px;">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn-black" style="display: inline-block; padding: 6px 20px; font-size: 16px; text-decoration: none;">
+      {{ 'العودة للوحة التحكم' if lang == 'ar' else 'Back to Dashboard' }}
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{{ 'إنشاء حساب' if lang == 'ar' else 'Sign Up' }}{% endblock %}
+
+
+{% block content %} 
+<form method="POST">
+    <h3 class="d-flex justify-content-center">{{ 'إنشاء حساب' if lang == 'ar' else 'Sign Up' }}</h3>
+    <div class="form-group" style="text-align: {{ 'right' if lang == 'ar' else 'left' }};">
+        <label for="email">{{ 'البريد الإلكتروني' if lang == 'ar' else 'Email Address' }}</label>
+        <input 
+            type="email" 
+            class="form-control" 
+            id="email" 
+            name="email" 
+            style="font-size: 14px; padding-right: 35px; text-align: left; direction: ltr;"
+            placeholder="{{ 'أدخل البريد الإلكتروني' if lang == 'ar' else 'Enter email' }}"
+            />
+    </div>
+    <div class="form-group" style="text-align: {{ 'right' if lang == 'ar' else 'left' }};">
+        <label for="firstname">{{ 'الاسم الأول' if lang == 'ar' else 'First Name' }}</label>
+        <input 
+            type="text" 
+            class="form-control" 
+            id="firstname" 
+            name="firstname" 
+            style="font-size: 14px; padding-right: 35px; text-align: left; direction: ltr;"
+            placeholder="{{ 'أدخل الاسم الأول' if lang == 'ar' else 'Enter first name' }}"
+            />
+    </div>
+    <div class="form-group position-relative" style="text-align: {{ 'right' if lang == 'ar' else 'left' }};">
+        <label for="password1">{{ 'كلمة المرور' if lang == 'ar' else 'Password' }}</label>
+        <input 
+            type="password" 
+            class="form-control" 
+            id="password1" 
+            name="password1" 
+            style="font-size: 14px; padding-right: 35px; text-align: left; direction: ltr;"
+
+            placeholder="{{ 'أدخل كلمة المرور' if lang == 'ar' else 'Enter password' }}"
+            oninput="toggleEyeVisibility('password1', 'eyeIcon1')"
+            onfocus="toggleEyeVisibility('password1', 'eyeIcon1')"
+            onblur="hideEyeIconIfEmpty('password1', 'eyeIcon1')"
+        />
+        <img
+            id="eyeIcon1"
+            src="{{ url_for('static', filename='images/eyeClose1.svg') }}"
+            alt="Toggle Password Visibility"
+            style="display:none; position: absolute; top: 75%; right: 10px; transform: translateY(-50%); cursor: pointer; width: 20px; height: 20px;"
+            onclick="togglePasswordVisibility('password1', 'eyeIcon1')"
+        />
+    </div>
+        <div class="form-group position-relative" style="text-align: {{ 'right' if lang == 'ar' else 'left' }};">
+        <label for="password2">{{ 'تأكيد كلمة المرور' if lang == 'ar' else 'Password (Confirm)' }}</label>
+        <input 
+            type="password" 
+            class="form-control" 
+            id="password2" 
+            name="password2"
+            style="font-size: 14px; padding-right: 35px; text-align: left; direction: ltr;"
+            placeholder="{{ 'أعد تأكيد كلمة المرور' if lang == 'ar' else 'Confirm password' }}"
+            oninput="toggleEyeVisibility('password2', 'eyeIcon2')"
+            onfocus="toggleEyeVisibility('password2', 'eyeIcon2')"
+            onblur="hideEyeIconIfEmpty('password2', 'eyeIcon2')"
+        />
+            <img
+                id="eyeIcon2"
+                src="{{ url_for('static', filename='images/eyeClose1.svg') }}"
+                alt="Toggle Password Visibility"
+                style="display:none; position: absolute; top: 75%; right: 10px; transform: translateY(-50%); cursor: pointer; width: 20px; height: 20px;"
+                onclick="togglePasswordVisibility('password2', 'eyeIcon2')"
+            />
+    </div>
+    
+        <button type="submit" class="btn btn-primary" style="float: {{ 'left' if lang == 'ar' else 'right' }};">{{ 'تسجيل' if lang == 'ar' else 'Submit' }}
+        </button>
+    
+</form>
+{% endblock %}
